@@ -1,5 +1,5 @@
 # Use an official Maven image to build the application
-FROM maven:3.9.9-openjdk-21 AS build
+FROM maven:3.8.1-openjdk-11 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN mvn clean package
 
 # Use an official OpenJDK image to run the application
-FROM openjdk:21-jre-slim
+FROM openjdk:11-jre-slim
 
 # Set the working directory inside the container
 WORKDIR /app
