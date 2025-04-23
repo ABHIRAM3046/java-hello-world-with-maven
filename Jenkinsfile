@@ -2,17 +2,12 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1'
+        maven 'Maven'
     }
-
-    environment {
-        DOCKER_IMAGE = "yourdockerhubusername/sample-java-app:${BUILD_NUMBER}"
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/your-username/sample-java-app.git'
+                git 'https://github.com/ABHIRAM3046/java-hello-world-with-maven.git'
             }
         }
         stage('Build with Maven') {
@@ -27,14 +22,27 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-creds']) {
-                    sh 'docker push $DOCKER_IMAGE'
+                withDockerRegistry(credentialsId: 'Docker-hub', url: '') {
+                    sh '''
+                        docker push abhiram3046/java-app-sample:$Build_Number
+                        docker tag abhiram3046/java-app-sample:$Build_Number abhiram3046/java-app-sample:latest
+                        docker push abhiram3046/java-app-sample:latest
+                    '''
                 }
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl set image deployment/sample-app-deployment sample-container=$DOCKER_IMAGE'
+                sshagent(['kube-deploy']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@34.230.176.42 << 'ENDSSH'
+                            rm -rf Kubernetes-Mainfests-java
+                            git clone https://github.com/ABHIRAM3046/Kubernetes-Mainfests-java.git
+                            cd Kubernetes-Mainfests-java/Manifests
+                            kubectl apply -f deployment.yaml
+                            kubectl apply -f service.yaml
+                    """
+                }
             }
         }
     }
