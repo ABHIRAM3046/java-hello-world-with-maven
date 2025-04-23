@@ -12,15 +12,15 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t abhiram3046/java-app-sample:$Build_Number .'
+                sh 'docker build -t abhiram3046/java-app-sample:$BUILD_NUMBER .'
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 withDockerRegistry(credentialsId: 'Docker-hub', url: '') {
                     sh '''
-                        docker push abhiram3046/java-app-sample:$Build_Number
-                        docker tag abhiram3046/java-app-sample:$Build_Number abhiram3046/java-app-sample:latest
+                        docker push abhiram3046/java-app-sample:$BUILD_NUMBER
+                        docker tag abhiram3046/java-app-sample:$BUILD_NUMBER abhiram3046/java-app-sample:latest
                         docker push abhiram3046/java-app-sample:latest
                     '''
                 }
