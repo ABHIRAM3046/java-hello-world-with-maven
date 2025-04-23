@@ -5,11 +5,6 @@ pipeline {
         maven 'Maven'
     }
     stages {
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/ABHIRAM3046/java-hello-world-with-maven.git'
-            }
-        }
         stage('Build with Maven') {
             steps {
                 sh 'mvn clean package'
@@ -17,7 +12,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                sh 'docker build -t abhiram3046/java-app-sample:$Build_Number .'
             }
         }
         stage('Push to Docker Hub') {
